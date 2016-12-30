@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
@@ -34,6 +35,8 @@ public class SimpleView extends View {
     private Paint drawPaint;
     // Store circles to draw each time each time the user touches down
     private List<Point> circlePoints;
+
+    private Path path = new Path();
 
     public SimpleView(Context context) {
         super(context);
@@ -93,10 +96,11 @@ public class SimpleView extends View {
         drawPaint.setColor(paintColor);
         drawPaint.setAntiAlias(true);
         drawPaint.setStrokeWidth(5);
-        drawPaint.setStyle(Paint.Style.STROKE);
+        drawPaint.setStyle(Paint.Style.STROKE);  // draw outline only
+        // drawPaint.setStyle(Paint.Style.FILL); // change to fill
+
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
-        drawPaint.setStyle(Paint.Style.FILL); // change to fill
     }
 
     private void invalidateTextPaintAndMeasurements() {
@@ -114,9 +118,8 @@ public class SimpleView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        for (Point p : circlePoints) {
-            canvas.drawCircle(p.x, p.y, 5, drawPaint);
-        }
+        canvas.drawPath(path, drawPaint);
+
         // TODO: consider storing these as member variables to reduce
         // allocations per draw cycle.
         int paddingLeft = getPaddingLeft();
@@ -140,11 +143,6 @@ public class SimpleView extends View {
             mExampleDrawable.draw(canvas);
         }
 
-        canvas.drawCircle(50, 50, 20, drawPaint);
-        drawPaint.setColor(Color.GREEN);
-        canvas.drawCircle(50, 150, 20, drawPaint);
-        drawPaint.setColor(Color.BLUE);
-        canvas.drawCircle(50, 250, 20, drawPaint);
     }
 
     /**
@@ -231,6 +229,18 @@ public class SimpleView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         float touchX = event.getX();
         float touchY = event.getY();
+        switch(event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                // Starts a new line in the path
+                path.moveTo(touchX, touchY);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                path.lineTo(touchX, touchY);
+                break;
+            default:
+                // invalid event
+                return false;
+        }
         circlePoints.add(new Point(Math.round(touchX), Math.round(touchY)));
         //indicate view should be redrawn
         postInvalidate();
