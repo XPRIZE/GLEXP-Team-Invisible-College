@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,14 +17,13 @@ import java.util.List;
 public class SoundRecyclerAdapter extends RecyclerView.Adapter<SoundRecyclerAdapter.ViewHolder>
             implements RecyclerView.OnClickListener {
 
-    private final List<SoundGram> sampleData = Arrays.asList(
-            new SoundGram("Hola mundo"),
-            new SoundGram("Bienvenuto")
-    );
+    private final List<SoundGram> sampleData = new ArrayList<>();
 
     public SoundRecyclerAdapter(RecyclerView rv) {
         rv.setAdapter(this);
         rv.setOnClickListener(this);
+        addItem(0, "Hola mundo");
+        addItem(0, "Bienvenuto");
     }
 
     @Override
@@ -58,10 +58,10 @@ public class SoundRecyclerAdapter extends RecyclerView.Adapter<SoundRecyclerAdap
         notifyItemRemoved(position);
     }
 
-    public void addItem(int positionToAdd) {
+    public void addItem(int positionToAdd, String soundGramTitle) {
         String newName = positionToAdd + "";
         SoundGram sgram = new SoundGram(newName);
-        sgram.setName("New Soundgram");
+        sgram.setName(soundGramTitle);
         sampleData.add(positionToAdd, sgram);
         notifyItemInserted(positionToAdd);
     }

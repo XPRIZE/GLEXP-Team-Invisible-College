@@ -1,24 +1,22 @@
-package college.invisible.glx;
+package college.invisible.soundgram;
 
 import android.content.Context;
-import android.media.MediaRecorder;
 import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import java.io.IOException;
 
-public class MainActivity extends AppCompatActivity {
+/**
+ * Created by ppham on 1/1/17.
+ */
+
+public class SoundGramControls {
 
     private static final String LOG_TAG = "AudioRecordTest";
     private static String mFileName = null;
@@ -27,9 +25,13 @@ public class MainActivity extends AppCompatActivity {
     private MediaRecorder mRecorder = null;
 
     private PlayButton   mPlayButton = null;
-    private MediaPlayer   mPlayer = null;
+    private MediaPlayer mPlayer = null;
 
-    private RecyclerView.Adapter mAdapter;
+    public SoundGramControls() {
+        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+        mFileName += "/audiorecordtest.3gp";
+        Log.i(LOG_TAG, "Filename " + mFileName);
+    }
 
     private void onRecord(boolean start) {
         if (start) {
@@ -47,6 +49,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void stopPlaying() {
+        mPlayer.release();
+        mPlayer = null;
+    }
+
+
     private void startPlaying() {
         mPlayer = new MediaPlayer();
         try {
@@ -56,11 +64,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             Log.e(LOG_TAG, "prepare() failed");
         }
-    }
-
-    private void stopPlaying() {
-        mPlayer.release();
-        mPlayer = null;
     }
 
     private void startRecording() {
@@ -125,64 +128,26 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     }
+    /* Accepts a linear layout to populate buttons.
+     */
+    public void onCreate(LinearLayout ll, Context context) {
 
-    public MainActivity() {
-        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileName += "/audiorecordtest.3gp";
-        Log.i(LOG_TAG, "Filename " + mFileName);
-    }
-
-    @Override
-    public void onCreate(Bundle icicle) {
-        super.onCreate(icicle);
-
-        /*
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        */
-        //setSupportActionBar(toolbar);
-
-        // Programmatically set the layout
-        LinearLayout ll = new LinearLayout(this);
-        mRecordButton = new RecordButton(this);
+        mRecordButton = new RecordButton(context);
         ll.addView(mRecordButton,
                 new LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         0));
-        mPlayButton = new PlayButton(this);
+        mPlayButton = new PlayButton(context);
         ll.addView(mPlayButton,
                 new LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         0));
 
-
-        LayoutInflater inflater =
-                (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        RecyclerView mRecyclerView = new RecyclerView(getApplicationContext());
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        inflater.inflate(R.layout.content_sound, mRecyclerView, true);
-
-        /*
-        ll.addView(mRecyclerView,
-                new RecyclerView.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
-                ));
-                */
-        // specify an adapter (see also next example)
-
-        //mAdapter = new SoundRecyclerAdapter(mRecyclerView);
-        //mRecyclerView.setAdapter(mAdapter);
-
-        setContentView(ll);
     }
 
-    @Override
     public void onPause() {
-        super.onPause();
         if (mRecorder != null) {
             mRecorder.release();
             mRecorder = null;

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context="college.invisible.glx.ListActivity">
-
+<!--
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,7 +20,7 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
-<!--
+    -->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
@@ -28,7 +28,6 @@
         android:scrollbars="vertical"
         tools:listitem="@layout/list_basic_item"
         />
--->
     <college.invisible.glx.SimpleView
         android:id="@+id/simpleDrawingView1"
         android:layout_width="wrap_content"
@@ -46,5 +45,13 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:src="@android:drawable/ic_dialog_email" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/coordText"
+        android:fontFamily="monospace"
+        android:typeface="monospace" />
 
 </android.support.design.widget.CoordinatorLayout>

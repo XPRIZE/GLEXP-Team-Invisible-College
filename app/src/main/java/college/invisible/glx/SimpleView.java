@@ -8,10 +8,12 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +35,11 @@ public class SimpleView extends View {
     private final int paintColor = Color.BLACK;
     // defines paint and canvas
     private Paint drawPaint;
-    // Store circles to draw each time each time the user touches down
-    private List<Point> circlePoints;
 
+    private Path letter = new Path();
     private Path path = new Path();
+
+    private TextView mCoordText;
 
     public SimpleView(Context context) {
         super(context);
@@ -49,7 +52,6 @@ public class SimpleView extends View {
         setFocusable(true);
         setFocusableInTouchMode(true);
         setupPaint();
-        circlePoints = new ArrayList<>();
     }
 
     public SimpleView(Context context, AttributeSet attrs, int defStyle) {
@@ -101,6 +103,10 @@ public class SimpleView extends View {
 
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
+    }
+
+    public void setTextView(TextView mCoordText) {
+        this.mCoordText = mCoordText;
     }
 
     private void invalidateTextPaintAndMeasurements() {
@@ -233,6 +239,7 @@ public class SimpleView extends View {
             case MotionEvent.ACTION_DOWN:
                 // Starts a new line in the path
                 path.moveTo(touchX, touchY);
+                mCoordText.setText(touchX + "," + touchY);
                 break;
             case MotionEvent.ACTION_MOVE:
                 path.lineTo(touchX, touchY);
@@ -241,9 +248,9 @@ public class SimpleView extends View {
                 // invalid event
                 return false;
         }
-        circlePoints.add(new Point(Math.round(touchX), Math.round(touchY)));
         //indicate view should be redrawn
         postInvalidate();
         return true;
     }
+
 }
