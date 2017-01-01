@@ -1,0 +1,3 @@
+[submodule "soundgram"]
+	path = soundgram
+	url = git@github.com:invisible-college/soundgram.git
