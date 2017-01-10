@@ -11,8 +11,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
+import college.invisible.soundgram.SoundGramController;
 import college.invisible.soundgram.SoundGramSample;
 import college.invisible.soundgram.SoundGram;
 
@@ -20,15 +22,14 @@ import college.invisible.soundgram.SoundGram;
  * Created by ppham on 2/23/16.
  */
 public class SoundRecyclerAdapter extends RecyclerView.Adapter<SoundRecyclerAdapter.ViewHolder>
-            implements RecyclerView.OnClickListener {
+            implements RecyclerView.OnClickListener, SoundGram.NewSampleListener {
 
-    private final List<SoundGram> sampleData = new ArrayList<>();
+    private final String LOG_TAG = "SoundRecyclerAdapter";
+    private final List<SoundGram> sampleData = SoundGramController.getInstance().getSoundGrams();
 
     public SoundRecyclerAdapter(RecyclerView rv) {
         rv.setAdapter(this);
         rv.setOnClickListener(this);
-        addItem(0, "Hola mundo");
-        addItem(0, "Bienvenuto");
     }
 
     @Override
@@ -41,13 +42,48 @@ public class SoundRecyclerAdapter extends RecyclerView.Adapter<SoundRecyclerAdap
         return new ViewHolder (rowView);
     }
 
+    public void updateViewHolder(ViewHolder viewHolder, SoundGram data) {
+        viewHolder.nameView.setText(data.getDisplayName());
+        List<Button> playButtons = viewHolder.playButtons;
+        Button recordButton = viewHolder.recordButton;
+        List<SoundGramSample> samples = data.getSamples();
+        LinearLayout ll = (LinearLayout) viewHolder.itemView;
+        if (samples.size() > playButtons.size()) {
+            // Add more buttons to accommodate more samples than current buttons
+            int diff = samples.size() - playButtons.size();
+            for (int i = 0; i < diff; i++) {
+                // create buttons with same context as the single record button
+                Button newButton = new Button(recordButton.getContext());
+                playButtons.add(newButton);
+                ll.addView(newButton);
+            }
+        } else if (samples.size() < playButtons.size()) {
+            int diff = playButtons.size() - samples.size();
+            for (int i = 0; i< diff; i++) {
+                Button oldButton = playButtons.get(0);
+                ll.removeView(oldButton);
+                playButtons.remove(oldButton); // remove all at the beginning
+            }
+        } // else they are equal, and we don't add/remove anything.
+        assert(playButtons.size() == samples.size());
+
+        for (int i = 0; i < samples.size(); i++) {
+            Button playButton = playButtons.get(i);
+            SoundGramSample sample = samples.get(i);
+            playButton.setText(sample.getSpeakerName());
+            sample.setOnClickListener(playButton);
+        }
+
+        data.setRecordButtonOnClickListener(viewHolder.recordButton);
+
+    }
+
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-
-        final SoundGram rowData = sampleData.get(position);
-        viewHolder.nameView.setText(rowData.getName());
-
-        viewHolder.itemView.setTag(rowData);
+        final SoundGram data = sampleData.get(position);
+        data.setViewHolder(viewHolder);
+        updateViewHolder(viewHolder, data);
+        viewHolder.itemView.setTag(data);
     }
 
 
@@ -63,14 +99,20 @@ public class SoundRecyclerAdapter extends RecyclerView.Adapter<SoundRecyclerAdap
         notifyItemRemoved(position);
     }
 
-    public void addItem(int positionToAdd, String soundGramTitle) {
-        SoundGram sgram = new SoundGram(soundGramTitle);
+    public void addItem(int positionToAdd, String shortTitle, String displayTitle) {
+        SoundGram sgram = new SoundGram(shortTitle, displayTitle);
         sampleData.add(positionToAdd, sgram);
+        sgram.setNewSampleListener(this);
         notifyItemInserted(positionToAdd);
     }
 
     @Override
     public void onClick(View v) {
+    }
+
+    @Override
+    public void onNewSample(RecyclerView.ViewHolder viewHolder, SoundGram soundGram) {
+        updateViewHolder((ViewHolder)viewHolder, soundGram);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements
@@ -102,37 +144,10 @@ public class SoundRecyclerAdapter extends RecyclerView.Adapter<SoundRecyclerAdap
          */
         @Override
         public void onClick(View v) {
-            LinearLayout ll = (LinearLayout) v;
             // v is the LinearLayout, it turns out, the parent.
             int position = this.getLayoutPosition();
             SoundGram data = (SoundGram) this.itemView.getTag();
-            nameView.setText(data.getName());
-            List<SoundGramSample> samples = data.getSamples();
-            if (samples.size() > playButtons.size()) {
-                // Add more buttons to accommodate more samples than current buttons
-                int diff = samples.size() - playButtons.size();
-                for (int i = 0; i < diff; i++) {
-                    // create buttons with same context as the single record button
-                    Button newButton = new Button(recordButton.getContext());
-                    playButtons.add(newButton);
-                    ll.addView(newButton);
-                }
-            } else if (samples.size() < playButtons.size()) {
-                int diff = playButtons.size() - samples.size();
-                for (int i = 0; i< diff; i++) {
-                    Button oldButton = playButtons.get(0);
-                    ll.removeView(oldButton);
-                    playButtons.remove(oldButton); // remove all at the beginning
-                }
-            } // else they are equal, and we don't add/remove anything.
-            assert(playButtons.size() == samples.size());
-
-            for (int i = 0; i < samples.size(); i++) {
-                Button playButton = playButtons.get(i);
-                SoundGramSample sample = samples.get(i);
-                playButton.setText(sample.getSpeakerName());
-                sample.setOnClickListener(playButton);
-            }
+            nameView.setText(data.getDisplayName());
             Log.d("Tag1", "At position + " + Integer.toString(position) + " " + v.toString());
         }
     }
