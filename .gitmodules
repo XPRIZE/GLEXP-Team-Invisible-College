@@ -1,6 +1,6 @@
 [submodule "soundgram"]
 	path = soundgram
 	url = git@github.com:invisible-college/soundgram.git
-[submodule "transporter/transporter"]
+[submodule "transporter"]
 	path = transporter
 	url = https://github.com/invisible-college/transporter

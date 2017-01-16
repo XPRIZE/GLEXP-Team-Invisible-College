@@ -9,49 +9,52 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import college.invisible.soundgram.SoundGramController;
 import college.invisible.soundgram.SoundGramControls;
+import college.invisible.transporter.BluetoothController;
 
 public class MainActivity extends AppCompatActivity
         implements SoundGramController.NotificationListener {
 
     private RecyclerView mRecyclerView;
     private final static int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 22;
+    private BluetoothController mBluetoothController;
+    private SoundGramController mSoundgramController;
 
     public MainActivity() {
-        SoundGramControls.checkAndCreateDirectory();
-        SoundGramController.getInstance().setNotifier(this);
+        mSoundgramController = SoundGramController.getInstance();
+        mSoundgramController.setNotifier(this);
     }
 
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
 
+        mBluetoothController = BluetoothController.getInstance(this);
+
         // Programmatically set the layout
         LinearLayout ll = new LinearLayout(this);
-
-        SoundGramControls sgc = new SoundGramControls(ll, this.getApplicationContext(), "First Gram");
-
 
         LayoutInflater inflater =
                 (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         //RecyclerView mRecyclerView = new RecyclerView(getApplicationContext());
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         //mRecyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 3);
         mRecyclerView.setLayoutManager(mLayoutManager);
         SoundRecyclerAdapter mAdapter = new SoundRecyclerAdapter(mRecyclerView);
         mRecyclerView.setAdapter(mAdapter);
@@ -91,6 +94,7 @@ public class MainActivity extends AppCompatActivity
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
 
+
             } else {
 
                 // No explanation needed, we can request the permission.
@@ -106,14 +110,23 @@ public class MainActivity extends AppCompatActivity
         }
 
         notifyUser("I'm alive!");
+        //Toast.makeText(this, "I SAID I'm alive!", Toast.LENGTH_SHORT).show();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton soundgramFab = (FloatingActionButton) findViewById(R.id.soundgram_fab);
+        soundgramFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mSoundgramController.addNewSoundgram();
             }
         });
 
+        FloatingActionButton transporterFab = (FloatingActionButton) findViewById(R.id.transporter_fab);
+        transporterFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mBluetoothController.scanForDevices();
+            }
+        });
 
     }
 

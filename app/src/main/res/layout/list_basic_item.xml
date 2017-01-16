@@ -8,24 +8,37 @@
     android:layout_height="wrap_content"
     >
 
-    <Button
-        android:text="Record yourself"
-        android:layout_width="0dp"
+    <android.support.v7.widget.CardView
+        android:layout_width="207dp"
         android:layout_height="wrap_content"
-        android:id="@+id/record_button"
-        android:layout_weight="1" />
+        android:id="@+id/cv"
+        >
 
-    <TextView
-        android:id="@+id/name_view"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textSize="20sp"
-        android:padding="30dp"
-        android:fontFamily="sans-serif-light"
-        tools:text="Sample text"
-        />
+        <LinearLayout
+            android:layout_width="332dp"
+            android:layout_height="wrap_content"
+            android:padding="0dp"
+            >
+        <Button
+            android:text="Record yourself"
+            android:layout_width="10dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/record_button"
+            android:layout_weight="1" />
 
-    />
+        <TextView
+            android:id="@+id/name_view"
+            android:layout_width="10dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:padding="0dp"
+            android:fontFamily="sans-serif-light"
+            tools:text="Sample text"
+            />
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
 
 </LinearLayout>
