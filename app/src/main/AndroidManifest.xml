@@ -5,8 +5,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
 
-    <!-- For some reason this is needed for BLE scans -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!-- For some reason this is needed for BLE scans, since we use GPS to receive location updates. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <!-- We could technically turn this off in Tanzania, but there's always a chance they'll be
          brought into a classroom or makerspace in a big city -->
