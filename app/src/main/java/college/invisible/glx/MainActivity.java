@@ -1,12 +1,15 @@
 package college.invisible.glx;
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -20,7 +23,8 @@ import college.invisible.soundgram.SoundGramController;
 import college.invisible.transporter.BluetoothController;
 
 public class MainActivity extends AppCompatActivity
-        implements SoundGramController.NotificationListener {
+        implements SoundGramController.NotificationListener,
+            SoundGramInputFragment.SoundGramInputListener {
 
     private RecyclerView mRecyclerView;
     private final static int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 22;
@@ -113,7 +117,18 @@ public class MainActivity extends AppCompatActivity
         soundgramFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mSoundgramController.addNewSoundgram();
+                //mRecyclerView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
+                FragmentManager fragMan = getSupportFragmentManager();
+                //SoundGramInputFragment frag = (SoundGramInputFragment) fragMan.findFragmentById(R.id.soundgram_input_frag);
+                //assert(frag != null);
+                SoundGramInputFragment frag = SoundGramInputFragment.newInstance("I'm a param!", "I'm another param!");
+                
+                // Execute a transaction, replacing any existing fragment
+                // with this one inside the frame.
+                FragmentTransaction ft = fragMan.beginTransaction();
+                ft.replace(R.id.soundgram_input_frag, frag);
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.commit();
             }
         });
 
@@ -160,5 +175,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void notifyUser(String message) {
         Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_LONG);
+    }
+
+    @Override
+    public void onSoundGramInput(String displayName) {
+
+        mSoundgramController.addNewSoundgram();
+
     }
 }

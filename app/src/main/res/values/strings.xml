@@ -2,4 +2,7 @@
     <string name="app_name">Global Learning XPRIZE</string>
     <string name="title_activity_sound">SoundActivity</string>
     <string name="title_activity_main">SoundGram</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="enter_soundgram_message">Enter soundgram message</string>
 </resources>

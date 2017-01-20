@@ -11,6 +11,13 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     >
 
+    <!--
+    <FrameLayout android:id="@+id/input" android:layout_weight="1"
+        android:layout_width="0px" android:layout_height="match_parent" />
+        -->
+    <!-- Hide for now -->
+
+
 <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -24,10 +31,17 @@
             android:background="?attr/colorPrimary"
              />
 
+    <fragment android:name="college.invisible.glx.SoundGramInputFragment"
+        android:id="@+id/soundgram_input_frag"
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        tools:layout="@layout/fragment_sound_gram_input" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:scrollbars="vertical"
         tools:listitem="@layout/list_basic_item"
         />
