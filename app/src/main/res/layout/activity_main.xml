@@ -11,12 +11,6 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     >
 
-    <!--
-    <FrameLayout android:id="@+id/input" android:layout_weight="1"
-        android:layout_width="0px" android:layout_height="match_parent" />
-        -->
-    <!-- Hide for now -->
-
 
 <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -31,13 +25,14 @@
             android:background="?attr/colorPrimary"
              />
 
+    <!--
     <fragment android:name="college.invisible.glx.SoundGramInputFragment"
         android:id="@+id/soundgram_input_frag"
         android:layout_weight="1"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         tools:layout="@layout/fragment_sound_gram_input" />
-
+    -->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="wrap_content"
@@ -45,6 +40,12 @@
         android:scrollbars="vertical"
         tools:listitem="@layout/list_basic_item"
         />
+
+    <FrameLayout
+        android:id="@+id/layout_frag_foreground"
+        android:layout_weight="1"
+        android:layout_width="0px"
+        android:layout_height="match_parent" />
 
 </android.support.design.widget.AppBarLayout>
 
@@ -57,6 +58,16 @@
         android:layout_gravity="bottom|right"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_import_export_black_24dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/speaker_fab"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_record_voice_over_black_24dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/soundgram_fab"

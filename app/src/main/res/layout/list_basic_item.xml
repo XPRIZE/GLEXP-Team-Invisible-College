@@ -18,24 +18,26 @@
             android:layout_width="332dp"
             android:layout_height="wrap_content"
             android:padding="0dp"
+            android:orientation="vertical"
             >
-        <Button
-            android:text="Record yourself"
-            android:layout_width="10dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/record_button"
-            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/name_view"
-            android:layout_width="10dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textSize="20sp"
+            android:textSize="50sp"
             android:padding="0dp"
             android:fontFamily="sans-serif-light"
             tools:text="Sample text"
             />
+
+            <Button
+                android:text="Record yourself"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/record_button"
+                android:layout_weight="1" />
 
         </LinearLayout>
 

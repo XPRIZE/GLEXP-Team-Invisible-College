@@ -5,6 +5,7 @@ import android.app.ActionBar;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
@@ -15,8 +16,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import college.invisible.soundgram.SoundGramController;
@@ -24,12 +27,19 @@ import college.invisible.transporter.BluetoothController;
 
 public class MainActivity extends AppCompatActivity
         implements SoundGramController.NotificationListener,
-            SoundGramInputFragment.SoundGramInputListener {
+            SoundGramInputFragment.SoundGramInputListener,
+            SpeakerNameInputFragment.SpeakerNameInputListener {
+
+    public final static String LOG_TAG = MainActivity.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
+    private SoundRecyclerAdapter mAdapter;
     private final static int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 22;
     private BluetoothController mBluetoothController;
     private SoundGramController mSoundgramController;
+    private FragmentManager mFragMan;
+    private SoundGramInputFragment mSoundGramInputFrag;
+    private SpeakerNameInputFragment mSpeakerNameInputFrag;
 
     public MainActivity() {
         mSoundgramController = SoundGramController.getInstance();
@@ -45,6 +55,8 @@ public class MainActivity extends AppCompatActivity
 
         setSupportActionBar(toolbar);
 
+        mFragMan = getSupportFragmentManager();
+
         mBluetoothController = BluetoothController.getInstance(this);
 
         // Programmatically set the layout
@@ -57,7 +69,7 @@ public class MainActivity extends AppCompatActivity
         //mRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 3);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        SoundRecyclerAdapter mAdapter = new SoundRecyclerAdapter(mRecyclerView);
+        mAdapter = new SoundRecyclerAdapter(mRecyclerView);
         mRecyclerView.setAdapter(mAdapter);
 
 /*
@@ -118,16 +130,17 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 //mRecyclerView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
-                FragmentManager fragMan = getSupportFragmentManager();
                 //SoundGramInputFragment frag = (SoundGramInputFragment) fragMan.findFragmentById(R.id.soundgram_input_frag);
                 //assert(frag != null);
-                SoundGramInputFragment frag = SoundGramInputFragment.newInstance("I'm a param!", "I'm another param!");
-                
+                mSoundGramInputFrag = SoundGramInputFragment.newInstance("I'm a param!", "I'm another param!");
                 // Execute a transaction, replacing any existing fragment
                 // with this one inside the frame.
-                FragmentTransaction ft = fragMan.beginTransaction();
-                ft.replace(R.id.soundgram_input_frag, frag);
+                FragmentTransaction ft = mFragMan.beginTransaction();
+                ft.replace(R.id.layout_frag_foreground, mSoundGramInputFrag);
                 ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                View fragLayout = (View) findViewById(R.id.layout_frag_foreground);
+                fragLayout.setLayoutParams(new AppBarLayout.LayoutParams(AppBarLayout.LayoutParams.WRAP_CONTENT,
+                        AppBarLayout.LayoutParams.WRAP_CONTENT));
                 ft.commit();
             }
         });
@@ -139,6 +152,25 @@ public class MainActivity extends AppCompatActivity
                 mBluetoothController.scanForDevices();
             }
         });
+
+        FloatingActionButton speakerFab = (FloatingActionButton) findViewById(R.id.speaker_fab);
+        speakerFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSpeakerNameInputFrag = SpeakerNameInputFragment.newInstance();
+                // Execute a transaction, replacing any existing fragment
+                // with this one inside the frame.
+                FragmentTransaction ft = mFragMan.beginTransaction();
+                ft.replace(R.id.layout_frag_foreground, mSpeakerNameInputFrag);
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                View fragLayout = (View) findViewById(R.id.layout_frag_foreground);
+                fragLayout.setLayoutParams(new AppBarLayout.LayoutParams(AppBarLayout.LayoutParams.WRAP_CONTENT,
+                        AppBarLayout.LayoutParams.WRAP_CONTENT));
+                ft.commit();
+
+            }
+        });
+
 
     }
 
@@ -179,8 +211,27 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSoundGramInput(String displayName) {
+        FragmentTransaction ft = mFragMan.beginTransaction();
 
-        mSoundgramController.addNewSoundgram();
+        ft.detach(mSoundGramInputFrag);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+        ft.commit();
 
+        String shortName = SoundGramController.convertDisplayName(displayName);
+        mAdapter.addItem(0, shortName, displayName);
     }
+
+    @Override
+    public void onSpeakerNameInput(String speakerName) {
+        FragmentTransaction ft = mFragMan.beginTransaction();
+
+        ft.detach(mSpeakerNameInputFrag);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+        ft.commit();
+
+        SoundGramController.getInstance().setSpeakerName(speakerName);
+
+        Log.i(LOG_TAG, "New speaker name: " + speakerName);
+    }
+
 }
