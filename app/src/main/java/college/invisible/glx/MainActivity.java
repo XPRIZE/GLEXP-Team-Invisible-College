@@ -5,6 +5,7 @@ import android.app.ActionBar;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,7 +15,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,7 +45,7 @@ public class MainActivity extends AppCompatActivity
     private SpeakerNameInputFragment mSpeakerNameInputFrag;
 
     public MainActivity() {
-        mSoundgramController = SoundGramController.getInstance();
+        mSoundgramController = SoundGramController.getInstance(Environment.getExternalStorageDirectory());
         mSoundgramController.setNotifier(this);
     }
 
@@ -67,8 +70,10 @@ public class MainActivity extends AppCompatActivity
         //RecyclerView mRecyclerView = new RecyclerView(getApplicationContext());
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         //mRecyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 3);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        //RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 3);
+        //RecyclerView.LayoutManager layoutManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.HORIZONTAL);
+        mRecyclerView.setLayoutManager(layoutManager);
         mAdapter = new SoundRecyclerAdapter(mRecyclerView);
         mRecyclerView.setAdapter(mAdapter);
 
