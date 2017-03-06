@@ -99,8 +99,8 @@ public class SoundRecyclerAdapter extends RecyclerView.Adapter<SoundRecyclerAdap
         notifyItemRemoved(position);
     }
 
-    public void addItem(int positionToAdd, String shortTitle, String displayTitle) {
-        SoundGram sgram = new SoundGram(shortTitle, displayTitle);
+    public void addItem(int positionToAdd, String displayTitle) {
+        SoundGram sgram = SoundGram.createFromName(displayTitle);
         sampleData.add(positionToAdd, sgram);
         sgram.setNewSampleListener(this);
         notifyItemInserted(positionToAdd);

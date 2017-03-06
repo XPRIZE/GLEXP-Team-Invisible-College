@@ -29,14 +29,17 @@ public class SoundGramApplication extends Application {
                         .applicationId("sgrams")
                         .clientKey(null)
                         .server("http://soundgrams.herokuapp.com/parse/")
+                        .enableLocalDataStore()
                 .build());
 
         // Initialize soundgram controller with external storage
-        SoundGramController.getInstance(Environment.getExternalStorageDirectory());
+        SoundGramController controller = SoundGramController.getInstance(Environment.getExternalStorageDirectory());
+        controller.startingUp();
 
         // As a test, try forcing a read of all soundgrams and samples from SD
         // and upload to Parse server
-        SoundGramController.getInstance().uploadToParse();
+        // Do this first, to create Parse Object IDs for all objects in memory.
+
     }
 
 }

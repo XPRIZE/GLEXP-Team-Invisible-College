@@ -222,8 +222,7 @@ public class MainActivity extends AppCompatActivity
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
         ft.commit();
 
-        String shortName = SoundGramController.convertDisplayName(displayName);
-        mAdapter.addItem(0, shortName, displayName);
+        mAdapter.addItem(0, displayName);
     }
 
     @Override
